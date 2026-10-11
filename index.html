@@ -28,6 +28,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .star{position:absolute;width:2px;height:2px;border-radius:50%;background:#cfe0ff;opacity:.5;animation:twinkle 6s ease-in-out infinite}
 @keyframes twinkle{0%,100%{opacity:.38}50%{opacity:.62}}
 @media (prefers-reduced-motion:reduce){.aurora-bg *,.core-glow,.core-inner,.curtain,.star{animation:none!important}}
+.bg-static .aurora-bg,.bg-static .aurora-bg *{animation:none!important}
 .app{max-width:430px;height:100vh;height:100dvh;margin:0 auto;display:flex;flex-direction:column;position:relative;z-index:1}
 .glass{background:linear-gradient(165deg,var(--deep1) 0%,var(--deep2) 55%,var(--deep3) 100%);border:1px solid var(--edge);border-radius:20px;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(180,210,255,.14),inset 0 -1px 0 rgba(0,0,0,.4)}
 .glass::before{content:'';position:absolute;top:0;left:0;right:0;height:46%;background:linear-gradient(180deg,rgba(190,220,255,.16),rgba(190,220,255,.03) 60%,transparent);pointer-events:none;border-radius:20px 20px 0 0}
@@ -392,6 +393,8 @@ var LS_FILTER='ege_audio_filter',LS_IDX='ege_audio_idx',LS_USERS='ege_users',LS_
 var rcState='idle',rcTimer=null,rcT0=0,stRunning=false,stRound=null,stScore=0,stSeries=0,stWord=null,stDisp=null,stTmr=null;
 var COLORS=[{n:'Красный',c:'#FF6B6B'},{n:'Синий',c:'#5FA8FF'},{n:'Зелёный',c:'#5CD98A'},{n:'Жёлтый',c:'#FFD86B'}];
 var PLAN={month:{name:'месяц',sum:199},year:{name:'год',sum:1490}},curPlan='month';
+var BG_STATIC=false;
+if(BG_STATIC)document.body.classList.add('bg-static');
 
 function $(id){return document.getElementById(id)}
 function isOn(id){return $(id)&&$(id).classList.contains('on')}
@@ -399,7 +402,7 @@ function srcOf(f){return f+(f.indexOf('?')>=0?'&':'?')+'v='+((MANIFEST&&MANIFEST
 function rand(a){return a[Math.floor(Math.random()*a.length)]}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
-/* ===== СТАТИСТИКА: ЭКЗАМЕН (тест) ОТДЕЛЬНО ОТ ТРЕНИРОВКИ ===== */
+/* ===== СТАТИСТИКА ===== */
 function stLoad(){try{return JSON.parse(localStorage.getItem(LS_STATS))}catch(e){return null}}
 function stSave(s){try{localStorage.setItem(LS_STATS,JSON.stringify(s))}catch(e){}}
 var STATS=stLoad()||{days:{},exam:{subj:{},topics:{}},prac:{a:0,c:0},tot:{ea:0,ec:0,l:0,sec:0},streak:0,lastDay:''};
@@ -453,10 +456,10 @@ badge('ach1','⚡ Молниеносная реакция',parseInt(lsGet(LS_RC,
 badge('ach3','🧠 Мастер внимания: 10+',parseInt(lsGet(LS_ST,'0'),10)>=10);
 $('an-ach').innerHTML=ach||'<span style="font-size:12px;color:var(--text2)">Достижения появятся после первой активности.</span>';}
 
-/* ===== ЗВУК НАПРЯМУЮ + КОСИНУСНЫЕ ФЕЙДЫ ===== */
+/* ===== ЗВУК: фейд через requestAnimationFrame (без ступенчатых щелчков) ===== */
 function setVol(v){try{player.volume=Math.max(0,Math.min(1,v));}catch(e){}}
-var rampIv=null;
-function rampVol(from,to,ms,cb){if(rampIv)clearInterval(rampIv);var t0=performance.now();rampIv=setInterval(function(){var p=Math.min(1,(performance.now()-t0)/ms);var e=0.5*(1-Math.cos(Math.PI*p));setVol(from+(to-from)*e);if(p>=1){clearInterval(rampIv);rampIv=null;setVol(to);if(cb)cb();}},10);}
+var rampRAF=null;
+function rampVol(from,to,ms,cb){if(rampRAF)cancelAnimationFrame(rampRAF);var t0=performance.now();function step(){var p=Math.min(1,(performance.now()-t0)/ms);var e=0.5*(1-Math.cos(Math.PI*p));setVol(from+(to-from)*e);if(p<1){rampRAF=requestAnimationFrame(step);}else{rampRAF=null;setVol(to);if(cb)cb();}}rampRAF=requestAnimationFrame(step);}
 function fadeOutAudio(cb){if(player.paused||player.ended){setVol(1);if(cb)cb();return;}rampVol(player.volume,0,340,function(){player.pause();setVol(1);if(cb)cb();});}
 function safePlay(url,after){var started=false;function go2(){if(started)return;started=true;if(after)after();setVol(0);player.play().catch(function(){});rampVol(0,1,500);}player.src=url;player.load();var iv=setInterval(function(){if(player.readyState>=3){clearInterval(iv);go2();}},70);setTimeout(function(){clearInterval(iv);go2();},4000);}
 function prefetch(url){try{var a=new Audio();a.preload='auto';a.src=url;a.load();}catch(e){}}
@@ -486,7 +489,7 @@ function collapseAudio(){saveAudioState();showMini(true);setMiniText(queue[curId
 function expandAudio(){showMini(false);enterAudio();}
 function miniPP(){if(player.paused){setVol(1);player.play().catch(function(){});}else player.pause();setMiniPP();}
 
-function playCurBg(){var t=queue[curIdx];if(!t)return;isWelcome=false;var aq=$('au-q');if(aq)aq.textContent=t.question;setMiniText(t);updateMeta(t);var st=$('au-st');if(st)st.textContent='🎵 Играет... ('+(curIdx+1)+'/'+queue.length+')';setVol(1);player.src=srcOf(t.file);player.play().catch(function(){});if(isOn('s-audio')){setRingState('playing');startAuRing();}stListen();prefetch(srcOf(queue[(curIdx+1)%queue.length].file));}
+function playCurBg(){var t=queue[curIdx];if(!t)return;isWelcome=false;var aq=$('au-q');if(aq)aq.textContent=t.question;setMiniText(t);updateMeta(t);var st=$('au-st');if(st)st.textContent='🎵 Играет... ('+(curIdx+1)+'/'+queue.length+')';setVol(1);player.src=srcOf(t.file);player.play().catch(function(){});if(isOn('s-audio')){setRingState('playing');startAuRing();}stListen();}
 function nextTrackBg(){if(!queue.length)return;saveAudioState();curIdx=(curIdx+1)%queue.length;playCurBg();}
 function prevTrackBg(){if(!queue.length)return;saveAudioState();curIdx=(curIdx-1+queue.length)%queue.length;playCurBg();}
 
@@ -548,7 +551,7 @@ fetch('audio/manifest.json').then(function(r){return r.json()}).then(function(m)
   toast('✅ База загружена: '+ALL.length+' треков','ok');
 }).catch(function(err){console.error('MANIFEST ERROR:',err);$('home-count').textContent='⚠️ База не загрузилась: '+err;toast('⚠️ manifest: '+err,'no');});
 
-/* ===== АУДИОВИЗУАЛ (тренировка: только первый клик; без рестарта анимации обёртки) ===== */
+/* ===== АУДИОВИЗУАЛ ===== */
 function enterReading(){go('s-read');avStatus=$('av-status');rqContent=$('rq-content');avNext=$('av-next');readIdx=0;isWelcome=false;ensureReadBar();loadReadingUI();}
 function setReadFilter(f,el){document.querySelectorAll('#rq-filters .ch').forEach(function(c){c.classList.remove('on')});el.classList.add('on');readQueue=(f==='all')?ALL.slice():ALL.filter(function(t){return t.subject===f});readIdx=0;loadReadingUI();}
 function renderReading(t){readFirstDone=false;$('av-topic').textContent=subjName(t.subject)+' · '+t.topic;$('av-question').textContent=t.question;var box=$('rq-ops');box.innerHTML='';var L=['А','Б','В','Г'];t.options.forEach(function(o,i){var d=document.createElement('div');d.className='op';d.style.animation='opIn .55s cubic-bezier(.16,1,.3,1) both';d.style.animationDelay=(i*80)+'ms';d.innerHTML='<div class="lt emboss">'+L[i]+'</div><div>'+o+'</div>';d.onclick=function(){rClick(d,i,t)};box.appendChild(d);});var exp=$('rq-exp');exp.classList.remove('on');exp.innerHTML='<b>💡 Пояснение</b><br>'+t.explanation;var n=(readIdx%readQueue.length)+1;$('av-prog').textContent=n+' / '+readQueue.length;rqContent.scrollTop=0;}
@@ -556,10 +559,10 @@ function loadReadingUI(){if(!readQueue.length){setStat('Нет вопросов 
 function setStat(txt,cls){if(avStatus){avStatus.textContent=txt;avStatus.className='av-status '+cls;}}
 function transitionTo(fn){rqContent.style.opacity='0';rqContent.style.transform='translateY(10px) scale(.99)';fadeOutAudio(function(){setTimeout(function(){fn();rqContent.style.opacity='1';rqContent.style.transform='none';},140);});}
 function rClick(el,i,t){if(el.classList.contains('ok')||el.classList.contains('no'))return;var ci=letterIdx(t.correct);var ok=(i===ci);if(!readFirstDone){readFirstDone=true;stAnswer(t.subject,t.topic,ok,'practice');}if(ok){el.classList.add('ok');document.querySelectorAll('#rq-ops .op').forEach(function(o){o.style.pointerEvents='none'});$('rq-exp').classList.add('on');setTimeout(function(){var e=$('rq-exp');if(e&&e.scrollIntoView)e.scrollIntoView({behavior:'smooth',block:'nearest'});},80);setStat('✅ Верно! Идём дальше…','ready');avNext.classList.add('pulse');autoTimer=setTimeout(function(){rNext();},2200);}else{el.classList.add('no');setStat('❌ Неверно, попробуйте ещё','bad');setTimeout(function(){el.classList.remove('no');setStat(player.paused?'✅ Выберите правильный ответ':'🎧 Слушаем вопрос…',player.paused?'ready':'play');},750);}}
-function rRepeat(){clearTimeout(autoTimer);if(!player.src)return;setStat('⏳ Загрузка…','load');avNext.classList.remove('pulse');fadeOutAudio(function(){player.currentTime=0;safePlay(player.src,function(){setStat('🎧 Слушаем снова…','play');ensureReadBar();});});}
+function rRepeat(){clearTimeout(autoTimer);if(!player.src)return;setStat('⏳ Перемотка…','load');avNext.classList.remove('pulse');fadeOutAudio(function(){player.currentTime=0;setVol(0);player.play().catch(function(){});rampVol(0,1,400);setStat('🎧 Слушаем снова…','play');ensureReadBar();});}
 function rNext(){clearTimeout(autoTimer);transitionTo(function(){readIdx++;loadReadingUI();});}
 
-/* ===== ТЕСТ (экзамен: одна попытка; без рестарта анимации обёртки) ===== */
+/* ===== ТЕСТ ===== */
 function setTestFilter(f,el){document.querySelectorAll('#tq-filters .ch').forEach(function(c){c.classList.remove('on')});el.classList.add('on');testQueue=(f==='all')?ALL.slice():ALL.filter(function(t){return t.subject===f});testIdx=0;loadTestUI();}
 function loadTestUI(){if(!testQueue.length)return;clearTimeout(testAutoTimer);var t=testQueue[testIdx%testQueue.length];$('tq-topic').textContent=subjName(t.subject)+' · '+t.topic;$('tq-text').textContent=t.question;var box=$('tq-ops');box.innerHTML='';var L=['А','Б','В','Г'];t.options.forEach(function(o,i){var d=document.createElement('div');d.className='op';d.style.animation='opIn .55s cubic-bezier(.16,1,.3,1) both';d.style.animationDelay=(i*80)+'ms';d.innerHTML='<div class="lt emboss">'+L[i]+'</div><div>'+o+'</div>';d.onclick=function(){tClick(d,i,t)};box.appendChild(d);});var exp=$('tq-exp');exp.classList.remove('on');exp.innerHTML='<b>💡 Пояснение</b><br>'+t.explanation;$('tq-next').style.display='none';var n=(testIdx%testQueue.length)+1;$('tq-prog').textContent=n+' / '+testQueue.length;var wrap=document.querySelector('#s-test .tq-wrap');if(wrap){wrap.scrollTop=0;}}
 function tClick(el,i,t){var ci=letterIdx(t.correct);var ok=(i===ci);var ops=document.querySelectorAll('#tq-ops .op');ops.forEach(function(o){o.style.pointerEvents='none'});stAnswer(t.subject,t.topic,ok,'exam');if(ok){el.classList.add('ok');toast('✅ Верно!','ok');$('tq-exp').classList.add('on');testAutoTimer=setTimeout(function(){tNextManual();},1800);}else{el.classList.add('no');ops[ci].classList.add('ok');toast('❌ Ошибка','no');$('tq-exp').classList.add('on');$('tq-next').style.display='block';}}
@@ -567,7 +570,7 @@ function tNextManual(){clearTimeout(testAutoTimer);testIdx++;loadTestUI();}
 
 /* ===== АУДИО ===== */
 function enterAudio(){go('s-audio');auRing=$('au-ring');auProg=$('au-prog-c');auSub=$('au-sub');var st=loadAudioState();curFilter=st.filter||'all';queue=(curFilter==='all')?ALL.slice():ALL.filter(function(t){return t.subject===curFilter});document.querySelectorAll('#au-chips .ch').forEach(function(c){var oc=c.getAttribute('onclick')||'';c.classList.toggle('on',(oc.indexOf("'"+curFilter+"'")>=0)||(curFilter==='all'&&c.textContent==='Все'));});if(!queue.length){queue=ALL.slice();curFilter='all';}curIdx=(st.idx>=0&&st.idx<queue.length)?st.idx:Math.floor(Math.random()*queue.length);loadAudioTrack(curIdx);}
-function loadAudioTrack(i){curIdx=i;var t=queue[i];if(!t)return;isWelcome=false;$('au-q').textContent=t.question;setMiniText(t);setRingState('loading');updateMeta(t);fadeOutAudio(function(){safePlay(srcOf(t.file),function(){setRingState('playing');startAuRing();updatePosState();stListen();prefetch(srcOf(queue[(i+1)%queue.length].file));});});}
+function loadAudioTrack(i){curIdx=i;var t=queue[i];if(!t)return;isWelcome=false;$('au-q').textContent=t.question;setMiniText(t);setRingState('loading');updateMeta(t);fadeOutAudio(function(){safePlay(srcOf(t.file),function(){setRingState('playing');startAuRing();updatePosState();stListen();});});}
 function setFilter(f,el){document.querySelectorAll('#au-chips .ch').forEach(function(c){c.classList.remove('on')});el.classList.add('on');curFilter=f;queue=(f==='all')?ALL.slice():ALL.filter(function(t){return t.subject===f});curIdx=0;saveAudioState();if(queue.length)loadAudioTrack(0);else{$('au-q').textContent='Нет треков';setRingState('paused');}toast('🎵 Плейлист: '+queue.length+' треков','ok');}
 function togglePlay(){if(!queue.length)return;if(player.paused){if(!player.src)loadAudioTrack(curIdx);else{setVol(1);player.play().catch(function(){});setRingState('playing');startAuRing();}}else{player.pause();setRingState('paused');stopAuRing();saveAudioState();}}
 function nextTrack(){if(!queue.length)return;saveAudioState();curIdx=(curIdx+1)%queue.length;loadAudioTrack(curIdx);}
