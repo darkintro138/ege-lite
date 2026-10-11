@@ -7,28 +7,27 @@
 <link rel="manifest" href="site.webmanifest">
 <meta name="theme-color" content="#0a1733">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>ЕГЭ Lite</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--deep1:#13284f;--deep2:#0a1733;--deep3:#08122a;--edge:rgba(120,160,255,.18);--edge2:rgba(120,160,255,.30);--green:#5CD98A;--red:#FF6B6B;--gold:#FFD86B;--cyan:#5FE3E0;--pink:#FF8FCB;--orange:#FFB35C;--text:#eaf1ff;--text2:rgba(220,232,255,.62);--text3:rgba(220,232,255,.34);--blue:#7FB2FF}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text);background:radial-gradient(120% 80% at 50% 0%,#0c1c44 0%,#070f28 45%,#04081a 100%)}
-.aurora-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden;animation:hueShift 18s linear infinite}
-@keyframes hueShift{0%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(30deg)}100%{filter:hue-rotate(0deg)}}
+.aurora-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
 .aurora-core{position:absolute;top:50%;left:50%;width:175%;height:85%;transform:translate(-50%,-50%)}
-.core-glow{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(64,255,170,0.30) 0%,rgba(0,188,212,0.22) 32%,rgba(120,90,220,0.16) 58%,transparent 78%);filter:blur(30px);animation:corePulse 5s ease-in-out infinite}
-@keyframes corePulse{0%,100%{opacity:.4;transform:scale(0.96)}50%{opacity:.85;transform:scale(1.12)}}
-.core-inner{position:absolute;top:50%;left:50%;width:55%;height:45%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(190,255,225,0.40) 0%,rgba(64,255,170,0.25) 35%,rgba(0,188,212,0.14) 60%,transparent 80%);filter:blur(20px);animation:coreInner 5s ease-in-out infinite}
-@keyframes coreInner{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(0.85)}50%{opacity:.85;transform:translate(-50%,-50%) scale(1.18)}}
-.curtain{position:absolute;top:-15%;height:130%;width:38%;filter:blur(40px);opacity:.32;transform:skewX(-12deg);animation:curtainSway 10s ease-in-out infinite alternate}
-.c1{left:2%;background:linear-gradient(180deg,transparent 0%,rgba(64,255,170,0.32) 30%,rgba(0,188,212,0.24) 55%,transparent 90%);animation-duration:12s}
-.c2{left:24%;background:linear-gradient(180deg,transparent 0%,rgba(0,188,212,0.30) 35%,rgba(100,150,246,0.26) 60%,transparent 92%);animation-duration:9s;animation-delay:1.5s}
-.c3{left:46%;background:linear-gradient(180deg,transparent 0%,rgba(140,70,220,0.30) 32%,rgba(64,255,170,0.24) 58%,transparent 90%);animation-duration:13s;animation-delay:3s}
-.c4{left:66%;background:linear-gradient(180deg,transparent 0%,rgba(100,150,246,0.30) 38%,rgba(255,120,180,0.18) 64%,transparent 92%);animation-duration:11s;animation-delay:2s}
-@keyframes curtainSway{0%{transform:skewX(-16deg) translateX(-4%) scaleY(1);opacity:.24}50%{transform:skewX(-9deg) translateX(3%) scaleY(1.1);opacity:.42}100%{transform:skewX(-13deg) translateX(6%) scaleY(.95);opacity:.3}}
-.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#cfe0ff;opacity:.5;animation:twinkle 3.4s ease-in-out infinite}
-@keyframes twinkle{0%,100%{opacity:.12;transform:scale(1)}50%{opacity:.85;transform:scale(1.5)}}
+.core-glow{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(64,255,170,0.22) 0%,rgba(0,188,212,0.16) 32%,rgba(120,90,220,0.12) 58%,transparent 78%);filter:blur(40px);opacity:.6;animation:corePulse 9s ease-in-out infinite;will-change:opacity,transform}
+@keyframes corePulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.7;transform:scale(1.04)}}
+.core-inner{position:absolute;top:50%;left:50%;width:55%;height:45%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(190,255,225,0.22) 0%,rgba(64,255,170,0.16) 35%,rgba(0,188,212,0.10) 60%,transparent 80%);filter:blur(30px);opacity:.5;animation:coreInner 11s ease-in-out infinite;will-change:opacity}
+@keyframes coreInner{0%,100%{opacity:.42}50%{opacity:.6}}
+.curtain{position:absolute;top:-15%;height:130%;width:38%;filter:blur(46px);opacity:.26;transform:skewX(-12deg);animation:curtainSway 16s ease-in-out infinite alternate;will-change:transform}
+.c1{left:2%;background:linear-gradient(180deg,transparent 0%,rgba(64,255,170,0.26) 30%,rgba(0,188,212,0.20) 55%,transparent 90%);animation-duration:18s}
+.c2{left:24%;background:linear-gradient(180deg,transparent 0%,rgba(0,188,212,0.24) 35%,rgba(100,150,246,0.20) 60%,transparent 92%);animation-duration:15s;animation-delay:2s}
+.c3{left:46%;background:linear-gradient(180deg,transparent 0%,rgba(140,70,220,0.24) 32%,rgba(64,255,170,0.20) 58%,transparent 90%);animation-duration:20s;animation-delay:4s}
+.c4{left:66%;background:linear-gradient(180deg,transparent 0%,rgba(100,150,246,0.24) 38%,rgba(255,120,180,0.14) 64%,transparent 92%);animation-duration:17s;animation-delay:3s}
+@keyframes curtainSway{0%{transform:skewX(-14deg) translateX(-3%) scaleY(1)}100%{transform:skewX(-10deg) translateX(3%) scaleY(1.04)}}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#cfe0ff;opacity:.5;animation:twinkle 6s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.38}50%{opacity:.62}}
+@media (prefers-reduced-motion:reduce){.aurora-bg *,.core-glow,.core-inner,.curtain,.star{animation:none!important}}
 .app{max-width:430px;height:100vh;height:100dvh;margin:0 auto;display:flex;flex-direction:column;position:relative;z-index:1}
 .glass{background:linear-gradient(165deg,var(--deep1) 0%,var(--deep2) 55%,var(--deep3) 100%);border:1px solid var(--edge);border-radius:20px;position:relative;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(180,210,255,.14),inset 0 -1px 0 rgba(0,0,0,.4)}
 .glass::before{content:'';position:absolute;top:0;left:0;right:0;height:46%;background:linear-gradient(180deg,rgba(190,220,255,.16),rgba(190,220,255,.03) 60%,transparent);pointer-events:none;border-radius:20px 20px 0 0}
@@ -84,7 +83,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .op.no{border-color:rgba(255,107,107,.7);background:linear-gradient(165deg,rgba(120,40,50,.4),rgba(70,20,28,.3));box-shadow:0 0 0 1px rgba(255,107,107,.4),0 0 30px 6px rgba(255,107,107,.3),inset 0 0 22px rgba(255,107,107,.14)}
 .op.no .lt{background:var(--red);box-shadow:0 0 16px rgba(255,107,107,.55)}
 @keyframes opIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
-@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.985);filter:blur(7px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes cardIn{from{opacity:.35;transform:translateY(8px)}to{opacity:1;transform:none}}
 .exp{background:linear-gradient(165deg,rgba(40,70,130,.4),rgba(16,34,72,.4));border:1px solid rgba(127,178,255,.28);border-radius:13px;padding:10px 11px;margin-top:9px;font-size:13px;line-height:1.45;display:none;color:#dce8ff}
 .exp.on{display:block;animation:opIn .5s cubic-bezier(.16,1,.3,1) both}.exp b{color:var(--blue);font-size:10px;text-transform:uppercase}
 .btn{padding:13px;border:1px solid var(--edge);border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(165deg,var(--deep1),var(--deep2));color:var(--text);transition:transform .15s,box-shadow .3s,border-color .3s;box-shadow:0 6px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(180,210,255,.14)}
@@ -549,10 +548,10 @@ fetch('audio/manifest.json').then(function(r){return r.json()}).then(function(m)
   toast('✅ База загружена: '+ALL.length+' треков','ok');
 }).catch(function(err){console.error('MANIFEST ERROR:',err);$('home-count').textContent='⚠️ База не загрузилась: '+err;toast('⚠️ manifest: '+err,'no');});
 
-/* ===== АУДИОВИЗУАЛ (тренировка: только первый клик) ===== */
+/* ===== АУДИОВИЗУАЛ (тренировка: только первый клик; без рестарта анимации обёртки) ===== */
 function enterReading(){go('s-read');avStatus=$('av-status');rqContent=$('rq-content');avNext=$('av-next');readIdx=0;isWelcome=false;ensureReadBar();loadReadingUI();}
 function setReadFilter(f,el){document.querySelectorAll('#rq-filters .ch').forEach(function(c){c.classList.remove('on')});el.classList.add('on');readQueue=(f==='all')?ALL.slice():ALL.filter(function(t){return t.subject===f});readIdx=0;loadReadingUI();}
-function renderReading(t){readFirstDone=false;$('av-topic').textContent=subjName(t.subject)+' · '+t.topic;$('av-question').textContent=t.question;var box=$('rq-ops');box.innerHTML='';var L=['А','Б','В','Г'];t.options.forEach(function(o,i){var d=document.createElement('div');d.className='op';d.style.animation='opIn .55s cubic-bezier(.16,1,.3,1) both';d.style.animationDelay=(i*80)+'ms';d.innerHTML='<div class="lt emboss">'+L[i]+'</div><div>'+o+'</div>';d.onclick=function(){rClick(d,i,t)};box.appendChild(d);});var exp=$('rq-exp');exp.classList.remove('on');exp.innerHTML='<b>💡 Пояснение</b><br>'+t.explanation;var n=(readIdx%readQueue.length)+1;$('av-prog').textContent=n+' / '+readQueue.length;rqContent.style.animation='none';void rqContent.offsetWidth;rqContent.style.animation='cardIn .55s cubic-bezier(.16,1,.3,1) both';rqContent.scrollTop=0;}
+function renderReading(t){readFirstDone=false;$('av-topic').textContent=subjName(t.subject)+' · '+t.topic;$('av-question').textContent=t.question;var box=$('rq-ops');box.innerHTML='';var L=['А','Б','В','Г'];t.options.forEach(function(o,i){var d=document.createElement('div');d.className='op';d.style.animation='opIn .55s cubic-bezier(.16,1,.3,1) both';d.style.animationDelay=(i*80)+'ms';d.innerHTML='<div class="lt emboss">'+L[i]+'</div><div>'+o+'</div>';d.onclick=function(){rClick(d,i,t)};box.appendChild(d);});var exp=$('rq-exp');exp.classList.remove('on');exp.innerHTML='<b>💡 Пояснение</b><br>'+t.explanation;var n=(readIdx%readQueue.length)+1;$('av-prog').textContent=n+' / '+readQueue.length;rqContent.scrollTop=0;}
 function loadReadingUI(){if(!readQueue.length){setStat('Нет вопросов в фильтре','bad');return;}clearTimeout(autoTimer);var t=readQueue[readIdx%readQueue.length];renderReading(t);avNext.classList.remove('pulse');setStat('⏳ Загрузка…','load');safePlay(srcOf(t.file),function(){setStat('🎧 Слушаем вопрос…','play');ensureReadBar();stListen();});}
 function setStat(txt,cls){if(avStatus){avStatus.textContent=txt;avStatus.className='av-status '+cls;}}
 function transitionTo(fn){rqContent.style.opacity='0';rqContent.style.transform='translateY(10px) scale(.99)';fadeOutAudio(function(){setTimeout(function(){fn();rqContent.style.opacity='1';rqContent.style.transform='none';},140);});}
@@ -560,9 +559,9 @@ function rClick(el,i,t){if(el.classList.contains('ok')||el.classList.contains('n
 function rRepeat(){clearTimeout(autoTimer);if(!player.src)return;setStat('⏳ Загрузка…','load');avNext.classList.remove('pulse');fadeOutAudio(function(){player.currentTime=0;safePlay(player.src,function(){setStat('🎧 Слушаем снова…','play');ensureReadBar();});});}
 function rNext(){clearTimeout(autoTimer);transitionTo(function(){readIdx++;loadReadingUI();});}
 
-/* ===== ТЕСТ (экзамен: одна попытка) ===== */
+/* ===== ТЕСТ (экзамен: одна попытка; без рестарта анимации обёртки) ===== */
 function setTestFilter(f,el){document.querySelectorAll('#tq-filters .ch').forEach(function(c){c.classList.remove('on')});el.classList.add('on');testQueue=(f==='all')?ALL.slice():ALL.filter(function(t){return t.subject===f});testIdx=0;loadTestUI();}
-function loadTestUI(){if(!testQueue.length)return;clearTimeout(testAutoTimer);var t=testQueue[testIdx%testQueue.length];$('tq-topic').textContent=subjName(t.subject)+' · '+t.topic;$('tq-text').textContent=t.question;var box=$('tq-ops');box.innerHTML='';var L=['А','Б','В','Г'];t.options.forEach(function(o,i){var d=document.createElement('div');d.className='op';d.style.animation='opIn .55s cubic-bezier(.16,1,.3,1) both';d.style.animationDelay=(i*80)+'ms';d.innerHTML='<div class="lt emboss">'+L[i]+'</div><div>'+o+'</div>';d.onclick=function(){tClick(d,i,t)};box.appendChild(d);});var exp=$('tq-exp');exp.classList.remove('on');exp.innerHTML='<b>💡 Пояснение</b><br>'+t.explanation;$('tq-next').style.display='none';var n=(testIdx%testQueue.length)+1;$('tq-prog').textContent=n+' / '+testQueue.length;var wrap=document.querySelector('#s-test .tq-wrap');if(wrap){wrap.style.animation='none';void wrap.offsetWidth;wrap.style.animation='cardIn .5s cubic-bezier(.16,1,.3,1) both';wrap.scrollTop=0;}}
+function loadTestUI(){if(!testQueue.length)return;clearTimeout(testAutoTimer);var t=testQueue[testIdx%testQueue.length];$('tq-topic').textContent=subjName(t.subject)+' · '+t.topic;$('tq-text').textContent=t.question;var box=$('tq-ops');box.innerHTML='';var L=['А','Б','В','Г'];t.options.forEach(function(o,i){var d=document.createElement('div');d.className='op';d.style.animation='opIn .55s cubic-bezier(.16,1,.3,1) both';d.style.animationDelay=(i*80)+'ms';d.innerHTML='<div class="lt emboss">'+L[i]+'</div><div>'+o+'</div>';d.onclick=function(){tClick(d,i,t)};box.appendChild(d);});var exp=$('tq-exp');exp.classList.remove('on');exp.innerHTML='<b>💡 Пояснение</b><br>'+t.explanation;$('tq-next').style.display='none';var n=(testIdx%testQueue.length)+1;$('tq-prog').textContent=n+' / '+testQueue.length;var wrap=document.querySelector('#s-test .tq-wrap');if(wrap){wrap.scrollTop=0;}}
 function tClick(el,i,t){var ci=letterIdx(t.correct);var ok=(i===ci);var ops=document.querySelectorAll('#tq-ops .op');ops.forEach(function(o){o.style.pointerEvents='none'});stAnswer(t.subject,t.topic,ok,'exam');if(ok){el.classList.add('ok');toast('✅ Верно!','ok');$('tq-exp').classList.add('on');testAutoTimer=setTimeout(function(){tNextManual();},1800);}else{el.classList.add('no');ops[ci].classList.add('ok');toast('❌ Ошибка','no');$('tq-exp').classList.add('on');$('tq-next').style.display='block';}}
 function tNextManual(){clearTimeout(testAutoTimer);testIdx++;loadTestUI();}
 
@@ -588,7 +587,7 @@ function openShare(){var t=STATS.tot;$('sh-acc').textContent=t.ea?examAcc()+'%':
 function closeShare(){$('modal').classList.remove('on')}
 function mClose(e){if(e.target===$('modal'))closeShare();}
 
-/* ===== PWA: service worker + подсказка установки для iOS ===== */
+/* ===== PWA ===== */
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').then(function(){console.log('SW зарегистрирован');}).catch(function(e){console.log('SW ошибка:',e);});});}
 (function(){var ios=/iP(hone|ad|od)/.test(navigator.userAgent)&&!window.matchMedia('(display-mode: standalone)').matches;if(ios){setTimeout(function(){toast('📲 Установка: Поделиться → На экран «Домой»','ok');},2500);}})();
 
